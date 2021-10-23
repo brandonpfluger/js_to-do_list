@@ -17,6 +17,13 @@ const addAValue = () => {
   }
 };
 
+let textBox = document.getElementById('input-text');
+textBox.addEventListener('keyup', x => {
+    if (x.key === 'Enter') {
+        addAValue();
+    }
+})
+
 const displayTheList = () => {
   let newList = document.createDocumentFragment();
   let ul = document.getElementById("to-do-list");
