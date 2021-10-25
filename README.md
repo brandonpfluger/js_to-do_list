@@ -1,0 +1,1 @@
+WBS group project to practice DOM manipulation by creating a basic to-do list.
