@@ -1,70 +1,135 @@
-const toDoList = [];
-
+let toDoList = [];
 const addAValue = () => {
   let userInput = document.getElementById("input-text").value;
   if (userInput) {
     const listObject = {
-      todoText: `${userInput}`,
+      todoText: userInput,
       todoId: Math.floor(Math.random() * 1000000),
       actionStatus: false
     };
     toDoList.unshift(listObject);
-    localStorage.setItem(`${listObject.todoText}`, `${userInput}`);
-    displayTheList();
+    localStorage.setItem("item", JSON.stringify(toDoList));
+    displayTheList(toDoList);
     document.getElementById("input-text").value = "";
   } else {
     alert("Please add a valid to-do item!");
   }
 };
 
-let textBox = document.getElementById('input-text');
-textBox.addEventListener('keyup', x => {
-    if (x.key === 'Enter') {
-        addAValue();
-    }
-})
+const makeEditable = (event) => {
+  event.target.contentEditable = true;
+  // event.target.addEventListener("focusout", displayTheList(toDoList));
 
-const displayTheList = () => {
+  event.target.addEventListener("keyup", (x) => {
+    if (x.key === "Enter") {
+      saveText();
+    }
+  });
+  // Updating localStorage after checkbox action
+  localStorage.setItem("item", JSON.stringify(toDoList));
+};
+
+const saveText = (event) => {
+  console.log(event.target);
+};
+
+// Enter Key function
+let textBox = document.getElementById("input-text");
+textBox.addEventListener("keyup", (x) => {
+  if (x.key === "Enter") {
+    addAValue();
+  }
+});
+
+// Display on screen
+const displayTheList = (toDoList) => {
   let newList = document.createDocumentFragment();
   let ul = document.getElementById("to-do-list");
   ul.innerHTML = "";
   toDoList.forEach((element) => {
-    let liElement = document.createElement("li");
-    let doneBox = document.createElement("input");
+    const liElement = document.createElement("li");
+
+    // Creating and initialising the checkbox
+    const doneBox = document.createElement("input");
     doneBox.setAttribute("type", "checkbox");
     doneBox.setAttribute("id", `${element.todoId}`);
-    liElement.appendChild(doneBox);
-    var text = document.createTextNode(element.todoText);
-    liElement.appendChild(text);
-    newList.appendChild(liElement);
-    // let ul = document.getElementById("to-do-list");
-    // let li = "<li>" + element.todoText + "</li>";
-    // ul.innerHTML = element.todoText
 
+    // Creating and initialising the text area (<span>)
+    const text = document.createElement("span");
+    text.setAttribute("id", `span-${element.todoId}`);
+    const innerText = document.createTextNode(element.todoText);
+    text.appendChild(innerText);
+    text.addEventListener("click", makeEditable);
+
+    // Creating and initialising the deletebutton
+    const deleteButton = document.createElement("button");
+    const deleteText = document.createTextNode("Delete");
+    deleteButton.setAttribute("id", `delete-${element.todoId}`);
+    deleteButton.appendChild(deleteText);
+
+    // Appending items to the list
+    liElement.appendChild(doneBox);
+    liElement.appendChild(text);
+    liElement.appendChild(deleteButton);
+    newList.appendChild(liElement);
+
+    // Listener for checkbox action
     doneBox.addEventListener("click", (event) => {
       updateCheckboxValue(event, element.todoId);
     });
+
+    // Listener for delete action
+    deleteButton.addEventListener("click", (event) => {
+      deleteARecord(event, element.todoId);
+    });
   });
+
+  // Renders objects on screen
   ul.appendChild(newList);
   updateCheckbox();
 };
 
+// Get items from localStorage on screen load
+const reference = localStorage.getItem("item");
+if (reference) {
+  toDoList = JSON.parse(reference);
+  displayTheList(toDoList);
+}
+
+// Delete a Record
+function deleteARecord(event, elementId) {
+  if (`delete-${elementId}` === event.target.id) {
+    const index = toDoList.findIndex(
+      (item) => `delete-${item.todoId}` === event.target.id
+    );
+    toDoList.splice(index, 1);
+  }
+  displayTheList(toDoList);
+}
+
+// Update the checkbox value in controller
 function updateCheckboxValue(event, elementId) {
   toDoList.forEach((e) => {
-    console.log(e.todoId);
     if (e.todoId === elementId) {
       e.actionStatus = event.target.checked;
     }
   });
-  // this.actionStatus = !this.actionStatus;
-  // console.log(this.actionStatus);
+  updateCheckbox();
+
+  // Updating localStorage after checkbox action
+  localStorage.setItem("item", JSON.stringify(toDoList));
 }
 
+// Update the checkbox in view
 function updateCheckbox() {
   toDoList.forEach((e) => {
     if (e.actionStatus) {
       document.getElementById(`${e.todoId}`).checked = true;
-      // console.log(e.todoId);
+      const checkedItem = document.getElementById(`span-${e.todoId}`);
+      checkedItem.setAttribute("class", "checked");
+    } else {
+      const checkedItem = document.getElementById(`span-${e.todoId}`);
+      checkedItem.setAttribute("class", "unchecked");
     }
   });
 }
