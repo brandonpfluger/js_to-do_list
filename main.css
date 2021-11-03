@@ -1,28 +1,28 @@
 span {
-  width: 300px;
-  display: inline-block;
-  border: 1px solid black;
-  overflow-wrap: break-word;
-  line-height: 1.8;
-  border-radius: 5px;
+    width: 300px;
+    display: inline-block;
+    border: 1px solid black;
+    overflow-wrap: break-word;
+    line-height: 1.8;
+    border-radius: 5px;
 }
 
 li {
-  padding: 1px 0;
-  margin: 4px;
-  list-style: none;
+    padding: 1px 0;
+    margin: 4px;
+    list-style: none;
 }
 
-li > * {
-  margin: 0 5px;
+li>* {
+    margin: 0 5px;
 }
 
 .checked {
-  text-decoration: line-through;
-  color: grey;
+    text-decoration: line-through;
+    color: grey;
 }
 
 .unchecked {
-  text-decoration: none;
-  color: black;
+    text-decoration: none;
+    color: black;
 }
